@@ -68,3 +68,66 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+---
+
+# Getting Started with Wasm rust
+
+## Create new wasm lib
+
+```
+cargo new wasm --lib
+```
+
+## Example `Cargo.toml`
+
+```toml
+[package]
+name = "wasm"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+path = "src/lib.rs"
+
+[dependencies]
+wasm-bindgen = "0.2.84"
+js-sys = "0.3.61"
+serde = { version = "1.0.152", features = ["derive"] }
+serde-wasm-bindgen = "0.4.5"
+...
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.34"
+
+[profile.release]
+# Tell `rustc` to optimize for small code size.
+opt-level = "s"
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false
+```
+
+## Build to lib
+
+```
+wasm-pack build --target web
+```
+
+Add `wasm` to package.json by using
+
+```json
+{
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4",
+    "wasm": "./wasm/pkg"
+  }
+}
+```

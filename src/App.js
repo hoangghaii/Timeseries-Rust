@@ -1,25 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import init, { main } from './wasm';
+import { useEffect } from 'react';
+import { config, data } from './demo/mock-data';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  function wasmMain() {
+    const result = main(data, config);
+    console.log('result', result);
+  }
+
+  useEffect(() => {
+    const initialize = async () => {
+      await init();
+      wasmMain();
+    };
+    initialize();
+  }, []);
+
+  return <div>Learn React</div>;
 }
 
 export default App;
