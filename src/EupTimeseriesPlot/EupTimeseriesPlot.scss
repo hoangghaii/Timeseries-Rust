@@ -1,0 +1,37 @@
+.timeseries_toolbar {
+  width: fit-content;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin-left: auto;
+  position: absolute !important;
+  right: 14px;
+  opacity: 0;
+  padding: 0 !important;
+  transition: all 0.3s ease;
+}
+
+.timeseries-plot-wrapper:hover .timeseries_toolbar {
+  opacity: 1;
+}
+
+.timeseries-plot {
+  .brush .selection {
+    fill: none !important;
+    fill-opacity: 0 !important;
+    stroke: none !important;
+    cursor: default !important;
+  }
+}
+
+.timeseries_tooltip {
+  position: absolute;
+  opacity: 0;
+  z-index: 1;
+  text-align: center;
+  border: 1px solid rgba(0, 0, 0, 0.26);
+  border-radius: 12px;
+  width: 300px;
+  pointer-events: none;
+  box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%),
+    0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);
+}

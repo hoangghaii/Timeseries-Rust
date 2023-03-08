@@ -112,7 +112,7 @@ wasm-opt = false
 ## Build to lib
 
 ```
-wasm-pack build --target web
+wasm-pack build --target web --out-name wasm --out-dir ../src/wasm
 ```
 
 Add `wasm` to package.json by using
