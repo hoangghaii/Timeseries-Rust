@@ -306,11 +306,6 @@ const TimeseriesPlot = () => {
       if (checkApprox(eleX, coordX, 0.2) && checkApprox(eleY, coordY, 0.0001)) {
         dataPoint = element;
       }
-      // checkApprox(eleY, coordY, 0.0001);
-
-      // if (checkApprox(eleY, coordY, 0.0001)) {
-      //   dataPoint = element;
-      // }
     }
 
     // if dataPoint, show the tooltip
