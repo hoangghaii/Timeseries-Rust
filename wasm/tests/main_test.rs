@@ -1,4 +1,3 @@
-#![allow(unused_imports)]
 #![allow(non_snake_case)]
 
 use wasm::checkApprox;
