@@ -1001,8 +1001,11 @@ const TimeseriesPlot = () => {
         />
         {/* <TimeseriesPlotToolbar
           setLoading={setLoading}
-          copyClipboardHandle={() =>
-            copyClipboardHandle(`timeseries-plot-${id}`, setLoading)
+          copyClipboardHandle={
+            () => {
+              console.log(`timeseries-plot-${id}`);
+            }
+            // copyClipboardHandle(`timeseries-plot-${id}`, setLoading)
           }
           displayLimitHightLight={displayLimitHightLight}
           onChangeShowHightLight={handleShowLimitHightLight}

@@ -19,12 +19,12 @@ pub struct ConfigStruct {
     pub markerSize: Option<u32>,
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
 pub struct KeyValuesStruct {
     pub SITE_NUM: Option<u32>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct StatsGroupStruct {
     pub Count: Option<u32>,
     pub Cp: Option<String>,
@@ -41,7 +41,7 @@ pub struct StatsGroupStruct {
     pub std: Option<f64>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct GroupItemStruct {
     pub keyValues: Option<KeyValuesStruct>,
     pub color: Option<String>,
@@ -49,7 +49,7 @@ pub struct GroupItemStruct {
     pub values: Option<Vec<f64>>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct StatsStruct {
     pub count: Option<u32>,
     pub cp: Option<f64>,
@@ -60,21 +60,21 @@ pub struct StatsStruct {
     pub std: Option<f64>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct InfoStruct {
     pub HI_LIMIT: Option<f64>,
     pub LO_LIMIT: Option<f64>,
     pub UNITS: Option<String>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, PartialEq)]
 pub struct DataStruct {
     pub groups: Option<Vec<GroupItemStruct>>,
     pub stats: Option<StatsStruct>,
     pub info: Option<InfoStruct>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct PreprocessItemStruct {
     pub color: String,
     pub keyValues: KeyValuesStruct,

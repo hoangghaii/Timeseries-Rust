@@ -2,10 +2,10 @@
 
 /* -------------- Import Modules -------------- */
 
-mod consts;
-mod data_preprocess;
-mod structs;
-mod utils;
+pub mod consts;
+pub mod data_preprocess;
+pub mod structs;
+pub mod utils;
 
 use crate::{data_preprocess::*, structs::*, utils::*};
 
@@ -104,49 +104,7 @@ pub fn checkApprox(point: Option<f64>, coord: Option<f64>, epsilon: Option<f64>)
     let verifiedCoord = coord.unwrap_or(0.0).abs();
     let verifiedEpsilon = epsilon.unwrap_or(0.0001).abs();
 
-    let approx = (verifiedPoint - verifiedCoord).abs() < verifiedEpsilon;
+    let approx = (verifiedPoint - verifiedCoord).abs() <= verifiedEpsilon;
 
     approx
-}
-
-#[test]
-fn test_groups_values_list() {
-    let group1 = GroupItemStruct {
-        keyValues: None,
-        color: None,
-        stats: None,
-        values: Some(vec![1.0, 2.0, 3.0]),
-    };
-
-    let group2 = GroupItemStruct {
-        keyValues: None,
-        color: None,
-        stats: None,
-        values: Some(vec![4.0, 5.0]),
-    };
-
-    let group3 = GroupItemStruct {
-        keyValues: None,
-        color: None,
-        stats: None,
-        values: Some(vec![6.0, 7.0, 8.0]),
-    };
-
-    let group4 = GroupItemStruct {
-        keyValues: None,
-        color: None,
-        stats: None,
-        values: Some(vec![]),
-    };
-
-    let groups = vec![group1, group2, group3, group4];
-
-    let result = groupsValuesList(groups);
-
-    let expected_output: Vec<Vec<f64>> = vec![[1.0, 4.0], [2.0, 5.0], [3.0, 6.0], [7.0, 8.0]]
-        .iter()
-        .map(|list| list.to_vec())
-        .collect::<Vec<Vec<f64>>>();
-
-    assert_eq!(result, expected_output);
 }
