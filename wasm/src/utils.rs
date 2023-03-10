@@ -1,8 +1,18 @@
 #![allow(non_snake_case)]
 #![allow(unused_assignments)]
 
-use crate::data_preprocess::*;
+/* -------------- Import Modules -------------- */
 
+use crate::structs::*;
+
+/* -------------- Define functions -------------- */
+
+/**
+ * Get domain of data
+ * @method getDomain
+ * @param {Array} groups - groups of data
+ * @returns {Array} - domain of data
+ */
 pub fn getDomain(groups: Vec<PreprocessItemStruct>) -> ([i32; 2], [f64; 2]) {
     let mut xDomain: [i32; 2] = [0, 0];
     let mut yDomain: [f64; 2] = [0.0, 0.0];
@@ -32,6 +42,13 @@ pub fn getDomain(groups: Vec<PreprocessItemStruct>) -> ([i32; 2], [f64; 2]) {
     domain
 }
 
+/**
+ * Check if should show limit
+ * @method shouldShowLimit
+ * @param {Number} hiLimit - high limit
+ * @param {Number} loLimit - low limit
+ * @returns {Array} - should show limit
+ */
 pub fn shouldShowLimit(hiLimit: f64, loLimit: f64) -> (f64, f64) {
     let mut lowLimit: f64 = 0.0;
     let mut hightLimit: f64 = 0.0;

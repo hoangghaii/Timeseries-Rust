@@ -54,7 +54,7 @@ const TimeseriesPlot = () => {
 
   function wasmFunc() {
     const result = main(data, config);
-
+    // console.log('result.filterGroups ', result.filterGroups);
     setDomain(result.domain);
     setGroups(result.filterGroups);
     setValuesList(result.groupsValues);
@@ -69,14 +69,6 @@ const TimeseriesPlot = () => {
     };
     initialize();
   }, []);
-
-  console.log('first', {
-    domain,
-    groups,
-    valuesList,
-    processedData,
-    shouldShowLimit,
-  });
 
   const width = 800;
   const height = 600;

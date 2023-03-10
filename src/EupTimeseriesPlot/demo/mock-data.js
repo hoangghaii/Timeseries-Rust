@@ -2,7 +2,8 @@
 const config = {
   // common config
   valueRangeMode: 'minMax', // minMax ,limit, (default minMax)
-  hiddenGroups: [1, 3], // hidden group index list
+  hiddenGroups: [], // hidden group index list
+  // hiddenGroups: [1, 3], // hidden group index list
   limitHighlight: false, //boolean
 
   // only timeseries

@@ -1,86 +1,8 @@
 #![allow(non_snake_case)]
 
-// import modules
-use serde::{Deserialize, Serialize};
+/* -------------- Import Modules -------------- */
 
-/* -------------- Define structs -------------- */
-#[derive(Serialize, Deserialize)]
-pub struct ConfigStruct {
-    // common config
-    pub valueRangeMode: String,
-    pub hiddenGroups: Vec<u32>,
-    pub limitHighlight: bool,
-
-    // only timeseries
-    pub drawLines: bool,
-    pub marker: bool,
-    pub markerSize: u32,
-}
-
-#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
-pub struct KeyValuesStruct {
-    pub SITE_NUM: u32,
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct StatsGroupStruct {
-    pub Count: u32,
-    pub Cp: String,
-    pub Cpk: String,
-    pub Max: String,
-    pub Mean: String,
-    pub Min: String,
-    pub Std: String,
-    pub cp: f64,
-    pub cpk: f64,
-    pub max: f64,
-    pub mean: f64,
-    pub min: f64,
-    pub std: f64,
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct GroupItemStruct {
-    pub keyValues: KeyValuesStruct,
-    pub color: String,
-    pub stats: StatsGroupStruct,
-    pub values: Vec<f64>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct StatsStruct {
-    pub count: u32,
-    pub cp: f64,
-    pub cpk: f64,
-    pub max: f64,
-    pub mean: f64,
-    pub min: f64,
-    pub std: f64,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct InfoStruct {
-    pub HI_LIMIT: f64,
-    pub LO_LIMIT: f64,
-    pub UNITS: String,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct DataStruct {
-    pub groups: Vec<GroupItemStruct>,
-    pub stats: StatsStruct,
-    pub info: InfoStruct,
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct PreprocessItemStruct {
-    pub color: String,
-    pub keyValues: KeyValuesStruct,
-    pub stats: StatsGroupStruct,
-    pub value: f64,
-    pub x: u32,
-    pub y: f64,
-}
+use crate::{consts::*, structs::*};
 
 /* -------------- Define functions -------------- */
 
@@ -93,10 +15,10 @@ pub struct PreprocessItemStruct {
  */
 pub fn filterGroup(groups: Vec<GroupItemStruct>, hiddenGroups: Vec<u32>) -> Vec<GroupItemStruct> {
     // Define filtered groups
-    let mut filterdGroup: Vec<&GroupItemStruct> = Vec::new();
+    let mut filterdGroup: Vec<GroupItemStruct> = Vec::new();
 
     // Loop through groups
-    for (index, item) in groups.iter().enumerate() {
+    for (index, item) in groups.into_iter().enumerate() {
         // Parse index to u32
         let index = index as u32;
 
@@ -110,18 +32,18 @@ pub fn filterGroup(groups: Vec<GroupItemStruct>, hiddenGroups: Vec<u32>) -> Vec<
     let mut returnGroups: Vec<GroupItemStruct> = Vec::new();
 
     // Loop through filtered groups
-    for item in filterdGroup.iter() {
+    for item in filterdGroup.into_iter() {
         // Get values
-        let values = &item.values;
+        let values = item.values.unwrap_or(vec![]);
 
         // Define list of values
         let mut listValues: Vec<f64> = Vec::new();
 
         // Loop through values
-        for el in values.iter() {
+        for value in values.iter() {
             // Check if value is !NaN
-            if !el.is_nan() {
-                listValues.push(*el)
+            if !value.is_nan() {
+                listValues.push(*value)
             }
         }
 
@@ -130,7 +52,7 @@ pub fn filterGroup(groups: Vec<GroupItemStruct>, hiddenGroups: Vec<u32>) -> Vec<
             color: item.color.clone(),
             keyValues: item.keyValues.clone(),
             stats: item.stats.clone(),
-            values: listValues,
+            values: Some(listValues),
         })
     }
 
@@ -149,20 +71,37 @@ pub fn preprocess(groups: Vec<GroupItemStruct>) -> Vec<PreprocessItemStruct> {
     let mut returnedGroups: Vec<PreprocessItemStruct> = Vec::new();
 
     // Loop through groups
-    for item in groups.iter() {
+    for item in groups.into_iter() {
         // Get values
-        let values = &item.values;
+        let values = item.values.unwrap_or(vec![]);
 
         // Loop through values
-        for (i, el) in values.iter().enumerate() {
+        for (i, el) in values.into_iter().enumerate() {
             // Push item to returnedGroups
             returnedGroups.push(PreprocessItemStruct {
-                color: item.color.clone(),
-                keyValues: item.keyValues.clone(),
-                stats: item.stats.clone(),
-                value: *el,
+                color: item.color.clone().unwrap_or(DEFAULT_COLOR.to_string()),
+                keyValues: item
+                    .keyValues
+                    .clone()
+                    .unwrap_or(KeyValuesStruct { SITE_NUM: None }),
+                stats: item.stats.clone().unwrap_or(StatsGroupStruct {
+                    Count: None,
+                    Cp: None,
+                    Cpk: None,
+                    Max: None,
+                    Mean: None,
+                    Min: None,
+                    Std: None,
+                    cp: None,
+                    cpk: None,
+                    max: None,
+                    mean: None,
+                    min: None,
+                    std: None,
+                }),
+                value: el,
                 x: i as u32,
-                y: *el,
+                y: el,
             })
         }
     }
@@ -177,68 +116,76 @@ pub fn preprocess(groups: Vec<GroupItemStruct>) -> Vec<PreprocessItemStruct> {
  * @param {array} groups
  * @returns {array}
  */
-pub fn groupsValuesList(groups: Vec<GroupItemStruct>) -> Vec<[f64; 1]> {
+pub fn groupsValuesList(groups: Vec<GroupItemStruct>) -> Vec<Vec<f64>> {
+    // Define returned values
+    let mut returnedValues: Vec<Vec<f64>> = Vec::new();
+
     // Check if groups.len() >= 2
     if groups.len() >= 2 {
-        // Define returned values
-        let mut returnedValues: Vec<[f64; 1]> = Vec::new();
-
         // Loop through groups
-        for (i, item) in groups.iter().enumerate() {
+        for i in 0..groups.len() - 1 {
+            // Get item
+            let item = &groups[i];
+
             // Get next item
-            let nextItem = groups.get(i + 1);
+            let nextItem = &groups[i + 1];
 
             // Get values
-            let values = &item.values;
+            let values = &item.values.clone().unwrap_or(vec![]);
 
             // Get next values
-            let nextValues = &nextItem.unwrap().values;
+            let nextValues = &nextItem.values.clone().unwrap_or(vec![]);
 
-            // Check if values.len() >= nextValues.len()
             if values.len() >= nextValues.len() {
                 for (i, el) in values.iter().enumerate() {
                     let elNextValues = nextValues.get(i);
 
-                    // Check if elNextValues is exist
-                    if elNextValues.is_some() {
-                        let mut returnedValues: Vec<[f64; 2]> = Vec::new();
+                    let mut list: Vec<f64> = Vec::new();
 
-                        returnedValues.push([*el, *elNextValues.unwrap()]);
+                    // Check if elNextValues is exist
+                    if !elNextValues.is_none() {
+                        list.push(*el);
+                        list.push(*elNextValues.unwrap());
                     } else {
-                        returnedValues.push([*el]);
+                        list.push(*el);
                     }
+
+                    returnedValues.push(list);
                 }
             } else {
                 for (i, el) in nextValues.iter().enumerate() {
                     let item = values.get(i);
-                    // Check if item is exist
-                    if item.is_some() {
-                        let mut returnedValues: Vec<[f64; 2]> = Vec::new();
 
-                        returnedValues.push([*item.unwrap(), *el]);
+                    let mut list: Vec<f64> = Vec::new();
+
+                    // Check if item is exist
+                    if !item.is_none() {
+                        list.push(*item.unwrap());
+                        list.push(*el);
                     } else {
-                        returnedValues.push([*el]);
+                        list.push(*el);
                     }
+
+                    returnedValues.push(list);
                 }
             }
         }
-
-        returnedValues
     } else {
-        // Define returned values
-        let mut returnedValues: Vec<[f64; 1]> = Vec::new();
-
         // Loop through groups
-        for item in groups.iter() {
+        for group in groups.into_iter() {
             // Get values
-            let values = &item.values;
+            let values = group.values.unwrap_or(vec![]);
 
             // Loop through values
-            for el in values.iter() {
-                returnedValues.push([*el])
+            for value in values {
+                let mut list: Vec<f64> = Vec::new();
+
+                list.push(value);
+
+                returnedValues.push(list);
             }
         }
-
-        returnedValues
     }
+
+    returnedValues
 }
