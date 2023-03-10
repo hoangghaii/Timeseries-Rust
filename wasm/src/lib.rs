@@ -15,7 +15,12 @@ use web_sys::console::*;
 
 /* -------------- Define functions -------------- */
 
-// Create own console_log function in web
+/**
+ * Create own console_log function in web
+ * @method console_log
+ * @param {string} str
+ * @param {object} value
+ */
 pub fn console_log<T: Serialize + ?Sized>(str: &str, value: &T) {
     log_2(
         &serde_wasm_bindgen::to_value(str).unwrap(),
@@ -23,6 +28,13 @@ pub fn console_log<T: Serialize + ?Sized>(str: &str, value: &T) {
     );
 }
 
+/**
+ * Main function
+ * @method main
+ * @param {object} input_data
+ * @param {object} input_config
+ * @returns {object}
+ */
 #[wasm_bindgen]
 pub fn main(input_data: JsValue, input_config: JsValue) -> JsValue {
     let data: DataStruct = serde_wasm_bindgen::from_value(input_data).unwrap();
@@ -66,7 +78,7 @@ pub fn main(input_data: JsValue, input_config: JsValue) -> JsValue {
         "",
         r"
     ----------------------------
-    |     Wellcome to rust     |
+    |     Wellcome to RUST     |
     ----------------------------
                _~^~^~_
            \) /  o o  \ (/
@@ -78,20 +90,21 @@ pub fn main(input_data: JsValue, input_config: JsValue) -> JsValue {
     serde_wasm_bindgen::to_value(&returnValues).unwrap()
 }
 
+/**
+ * Check if point is approx to coord
+ * @method checkApprox
+ * @param {number} point
+ * @param {number} coord
+ * @param {number} epsilon
+ * @returns {boolean}
+ */
 #[wasm_bindgen]
-pub fn checkApprox(point: i32, coord: f64, epsilon: f64) -> bool {
-    let verifiedPoint = point.abs();
-    let verifiedCoord = if !coord.is_nan() { coord.abs() } else { 0.0 };
-    let verifiedEpsilon = if !coord.is_nan() { epsilon } else { 0.0001 };
+pub fn checkApprox(point: Option<f64>, coord: Option<f64>, epsilon: Option<f64>) -> bool {
+    let verifiedPoint = point.unwrap_or(0.0).abs();
+    let verifiedCoord = coord.unwrap_or(0.0).abs();
+    let verifiedEpsilon = epsilon.unwrap_or(0.0001).abs();
 
-    let approx = if verifiedPoint == 0 {
-        verifiedCoord < verifiedEpsilon
-    } else {
-        (verifiedCoord - verifiedPoint as f64).abs() < verifiedEpsilon
-    };
-
-    // console.log in web
-    // console_log("checkApprox ", &approx);
+    let approx = (verifiedPoint - verifiedCoord).abs() < verifiedEpsilon;
 
     approx
 }

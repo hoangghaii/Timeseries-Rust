@@ -54,7 +54,6 @@ const TimeseriesPlot = () => {
 
   function wasmFunc() {
     const result = main(data, config);
-    // console.log('result.filterGroups ', result.filterGroups);
     setDomain(result.domain);
     setGroups(result.filterGroups);
     setValuesList(result.groupsValues);
@@ -307,6 +306,11 @@ const TimeseriesPlot = () => {
       if (checkApprox(eleX, coordX, 0.2) && checkApprox(eleY, coordY, 0.0001)) {
         dataPoint = element;
       }
+      // checkApprox(eleY, coordY, 0.0001);
+
+      // if (checkApprox(eleY, coordY, 0.0001)) {
+      //   dataPoint = element;
+      // }
     }
 
     // if dataPoint, show the tooltip
